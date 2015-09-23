@@ -25,7 +25,7 @@ function isContentId(str) {
 
 function getContentIdFromUrl(url) {
 
-	contentId = 'null';
+	contentId = null;
 	var urlArr = url.split('/');
 
 	for(var i = 0; i < urlArr.length; i++) {
@@ -40,33 +40,38 @@ function getContentIdFromUrl(url) {
 
 function getVideoLink(contentId) {
 
-	document.getElementById('content').innerHTML = contentId;
+
+	document.getElementById('content').innerHTML += contentId;
+	document.getElementById('content').innerHTML += ' --- test --- ';
+
 
 	var jsonSuffix = "http://www.nfl.com/static/embeddablevideo/";
 	var cdn = "http://a.video.nfl.com/";
-
 	var json_url = jsonSuffix + contentId +".json";
+
 	$.getJSON( json_url, function( data ) {
 
 		if(data['cdnData']['bitrateInfo']) {
 
 			var arr = data['cdnData']['bitrateInfo'];
-
 			for(var i = 0; i < arr.length; i++) {
 			}
 
 			var highest_quality_path = arr[arr.length-1]['path'];
 			var link = cdn + highest_quality_path; 
-			var html_link = "<a href=\"" + link + "\">Highest Quality</a>";
+			var html_link = "<a href=\"" + link + "\"> Highest Quality </a>";
 			
-			document.getElementById('content').innerHTML = html_link;
+			document.getElementById('content').innerHTML += html_link;
 			//document.getElementById('content').innerHTML = data['cdnData']['bitrateInfo']; 
 		}
 
 		else {
-			document.getElementById('content').innerHTML = 'coundnt get link from json'; 
+			document.getElementById('content').innerHTML += 'ERROR: coundnt get link from json'; 
 		}
-	});
+	})
+	.error(function() { 
+		document.getElementById('content').innerHTML += 'ERROR: coundnt get json -- content ID incorrect'; 
+ 	});
 }
 
 // This callback function is called when the content script has been 
@@ -74,7 +79,6 @@ function getVideoLink(contentId) {
 function onPageDetailsReceived(pageDetails)  { 
 
 	var error_message = 'No Video Found, are you on an NFL site?';
-
 
 	if( pageDetails.contentId ) {
 		getVideoLink(pageDetails.contentId);
