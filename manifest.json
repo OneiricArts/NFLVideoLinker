@@ -1,0 +1,19 @@
+{
+    "manifest_version": 2,
+    "name": "NFL Video Linker",
+    "description": "Get Direct mp4 links for NFL sites",
+    "version": "0.2",
+    "background": {
+        "scripts": ["event.js"],
+        "persistent": false
+    },
+    "browser_action": {
+        "default_icon": "icon.png",
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "tabs", 
+        "http://*/*", 
+        "https://*/*"
+    ]
+}
