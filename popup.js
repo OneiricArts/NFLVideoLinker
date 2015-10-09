@@ -1,26 +1,17 @@
+
+var debugMode = true;
+
 function isContentId(str) {
 	var i = str.length;
 	count = 0;
+
 	while (i--) {
-		// isNaN == false if number, or ' ' or '' -- find better way
-		// using char < 9 etc has same problem 
-		// try ' ' < 7 in console
-		// http://stackoverflow.com/questions/15737763/how-to-use-javascript-to-check-if-the-first-character-in-a-textbox-is-a-number
-  		if( !isNaN(str[i]) ) {
-  			count++;
-	  	}
-
-	  	if( count > 3 ){
-	  		return true;
-	  	}
+		if( !isNaN(str[i]) ) { count++;} 
+		if( count > 3 ){ return true; }
 	}
 
-	if (count <= 3) {
-		return false;
-	}
-	else {
-		return true;
-	}
+	if (count <= 3) { return false; } 
+	else { return true; }
 }
 
 function getContentIdFromUrl(url) {
@@ -38,16 +29,32 @@ function getContentIdFromUrl(url) {
 	return contentId;
 }
 
+function makeVideoCard(title, content) {
+	
+	var $link_div = $('#link_template').clone();
+	var $link_title = $link_div.find('#link_title');
+	var $link_content = $link_div.find('#link_content');
+
+	$link_title.text(title);
+	$link_content.html(content);
+
+	$('.page-content').append($link_div);
+	$link_div.show();
+}
+
 function getVideoLink(contentId) {
 
-
-	document.getElementById('content').innerHTML += contentId;
-	document.getElementById('content').innerHTML += ' --- test --- ';
-
+	if(debugMode) {
+		$('#debugInfo').append( "[url.contentId: " + contentId + "]<br>" );
+	}
 
 	var jsonSuffix = "http://www.nfl.com/static/embeddablevideo/";
 	var cdn = "http://a.video.nfl.com/";
 	var json_url = jsonSuffix + contentId +".json";
+
+	if(debugMode) {
+		$('#debugInfo').append( "[json url: " + json_url + "]<br>" );
+	}
 
 	$.getJSON( json_url, function( data ) {
 
@@ -61,25 +68,52 @@ function getVideoLink(contentId) {
 			var link = cdn + highest_quality_path; 
 			var html_link = "<a href=\"" + link + "\"> Highest Quality </a>";
 			
-			document.getElementById('content').innerHTML += html_link;
-			//document.getElementById('content').innerHTML = data['cdnData']['bitrateInfo']; 
+			var title = 'Video';
+			if(data['briefHeadline']) {
+				title = data['briefHeadline'];
+			}
+			
+			makeVideoCard(title, html_link);
 		}
 
 		else {
-			document.getElementById('content').innerHTML += 'ERROR: coundnt get link from json'; 
+			errorDisplay('json_url_error')
 		}
 	})
 	.error(function() { 
-		document.getElementById('content').innerHTML += 'ERROR: coundnt get json -- content ID incorrect'; 
- 	});
+		errorDisplay('json_error');
+	});
 }
 
-// This callback function is called when the content script has been 
-// injected and returned its results
+function errorDisplay(errorId) {
+	$('#error_card').show();
+
+	if (errorId == "site_error") {
+		$('#error_detail').append("Detail: Couldn't find content ID.<br><hr>" 
+		); 
+	}
+	else if(errorId == "json_error") {
+		$('#error_detail').append("Detail: Couldn't get json from content ID.<br>");
+	}
+	else if(errorId == "json_url_error") {
+		$('#error_detail').append("Detail: Couldn't get video link from json.<br>");
+	}
+}
+
 function onPageDetailsReceived(pageDetails)  { 
 
-	var error_message = 'No Video Found, are you on an NFL site?';
+	if(debugMode) {$('#debugDiv').show();}
 
+	if(debugMode) {
+		$('#debugInfo').append( "[pagedetails.contentId: " + 
+			pageDetails.contentId + "]<br>" );
+	}
+	
+	/*
+		Look for contentId in order of: in page source -> page url
+	*/
+
+	//pageDetails.contentId = '09000d5d81c27f1e';
 	if( pageDetails.contentId ) {
 		getVideoLink(pageDetails.contentId);
 	}
@@ -89,9 +123,8 @@ function onPageDetailsReceived(pageDetails)  {
 	}
 
 	else {
-		document.getElementById('content').innerHTML = error_message;
+		errorDisplay("site_error");
 	}
-
 } 
 
 // When the popup HTML has loaded
@@ -104,4 +137,14 @@ window.addEventListener('load', function(evt) {
 		// content.js into the current tab's HTML
 		eventPage.getPageDetails(onPageDetailsReceived);
 	});
+});
+
+/* opens links in new tabs */
+$(document).ready(function(){
+	$('body').on('click', 'a', function(){
+		chrome.tabs.create({url: $(this).attr('href')});
+		return false;
+	});
+	// could replace tabs.create with [below] to create popup
+	// chrome.windows.create({url: link, type: "popup",/* focused: false*/});
 });

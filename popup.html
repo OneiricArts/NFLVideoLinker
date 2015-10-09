@@ -1,28 +1,110 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <style>
-            body { 
-                min-width: 420px; 
-                overflow-x: hidden; 
-                font-family: Arial, sans-serif; 
-                font-size: 12px; 
-            }
-            input, textarea { 
-                width: 420px; 
-            }
-            input#save { 
-                font-weight: bold; width: auto; 
-            }
-        </style>
-        <script src="jquery.js"></script>
-        <script src="popup.js"></script>
-    </head>
-    <body>
-        TEST
-        <div id="content">
-          
-        </div>
-        
-    </body>
+	<head>
+
+
+		<!--<link rel="stylesheet" 
+		href="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.indigo-pink.min.css">
+		<script src="https://storage.googleapis.com/code.getmdl.io/1.0.5/material.min.js"></script>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">-->
+		<link rel="stylesheet" href="mdl/material.min.css">
+		<script src="mdl/material.min.js"></script>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		
+		<script src="jquery.js"></script>
+		<script src="popup.js"></script>
+
+
+		<style>
+			html, body { 
+					min-height:300px;
+					min-width: 300px; 
+			}
+
+			.mdl-card { /* over writing Google's dumb min height for card*/
+				min-height: 50px;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<!-- Always shows a header, even in smaller screens. -->
+		<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+			<header class="mdl-layout__header">
+				<div class="mdl-layout__header-row">
+					<!-- Title -->
+					<span class="mdl-layout-title">NFL Video Linker</span>
+					<!-- Add spacer, to align navigation to the right -->
+					<div class="mdl-layout-spacer"></div>
+				</div>
+			</header>
+
+			<main class="mdl-layout__content">
+				<div class="page-content"><!-- Your content goes here -->
+
+					<!-- ERROR CARD --> 
+					<div id="error_card" class="mdl-grid" 
+					style="display: none;">
+						<div class="mdl-card mdl-shadow--4dp">
+							
+							<div class="mdl-card__title">
+								<h2 class="mdl-card__title-text">
+								Oops, something broke :( </h2>
+							</div>
+
+							<div id="error_detail" 
+							class="mdl-card__supporting-text">
+								Are you on an NFL/NFL Team site? This addon 
+								only looks for videos from teh NFL video player. 
+								If this is an error, please help me fix it :)
+								<br><hr>
+							</div>
+
+							<div class="mdl-card__actions mdl-card--border">
+								<a class="mdl-button mdl-button--colored 
+								mdl-js-button mdl-js-ripple-effect">
+								Report Bug</a>
+							</div>
+						</div>
+					</div>
+
+					<!-- Debug Card -->
+					<div id="debugDiv" class="mdl-grid" 
+					style="display: none;"> 
+						<div class="mdl-card mdl-shadow--4dp">
+
+							<div class="mdl-card__title">
+								<h2 class="mdl-card__title-text">
+								Debug Info.</h2>
+							</div>
+
+							<div id ="debugInfo" 
+							class="mdl-card__supporting-text">
+							</div>
+
+						</div>
+					</div>
+
+					<!-- Template for Link Cards -->
+					<div id="link_template" class="mdl-grid" 
+					style="display: none;">
+						<div class="mdl-card mdl-shadow--4dp">
+							
+							<div class="mdl-card__title">
+								<h2 id="link_title" 
+								class="mdl-card__title-text"></h2>
+							</div>
+
+							<div id="link_content" 
+							class="mdl-card__supporting-text"></div>
+
+						</div>
+					</div>
+
+				</div>
+			</main>
+
+		</div>
+	</body>
 </html>
