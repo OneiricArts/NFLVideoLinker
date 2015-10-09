@@ -36,7 +36,8 @@ function makeVideoCard(title, content) {
 	var $link_content = $link_div.find('#link_content');
 
 	$link_title.text(title);
-	$link_content.html(content);
+	$link_content.text('HQ');
+	$link_content.attr('href', content);
 
 	$('.page-content').append($link_div);
 	$link_div.show();
@@ -66,14 +67,14 @@ function getVideoLink(contentId) {
 
 			var highest_quality_path = arr[arr.length-1]['path'];
 			var link = cdn + highest_quality_path; 
-			var html_link = "<a href=\"" + link + "\"> Highest Quality </a>";
+			//var html_link = "<a href=\"" + link + "\"> Highest Quality </a>";
 			
 			var title = 'Video';
 			if(data['briefHeadline']) {
 				title = data['briefHeadline'];
 			}
 			
-			makeVideoCard(title, html_link);
+			makeVideoCard(title, link);
 		}
 
 		else {
@@ -89,7 +90,7 @@ function errorDisplay(errorId) {
 	$('#error_card').show();
 
 	if (errorId == "site_error") {
-		$('#error_detail').append("Detail: Couldn't find content ID.<br><hr>" 
+		$('#error_detail').append("Detail: Couldn't find content ID.<br>" 
 		); 
 	}
 	else if(errorId == "json_error") {
